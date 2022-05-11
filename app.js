@@ -6,6 +6,7 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const app = express()
 const bcrypt = require('bcrypt')
+const escape = require('pg-escape')
 const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
@@ -45,15 +46,56 @@ CREATE TABLE IF NOT EXISTS public.User (
 
 })
 
+
+
+
 //introduce and setup the passport
 const initializePassport = require('./passport-config')
 initializePassport(
     passport,
     //getUserByEmail function
-    email=> users.find(user =>user.email ===email),
-    //getUserById function
-    id => users.find(user =>user.id ===id)
+    email=> requestEmail(email),
+    //trying to rewrite this, but it gets the error.
+    id=> requestID(id)
+    
     )
+
+//request email function
+function requestEmail(email){
+    let select = escape('SELECT * FROM public."user" WHERE (email = %L)', email);
+    return new Promise((resolve,reject) =>{
+        client.query(select,function(err, result){
+            if(err){
+                console.log("query error")
+                reject(err)
+            }
+            if(result.rowCount!==0){
+               console.log(result.rows[0])
+               resolve(result.rows[0])
+            }
+        })
+
+    })
+
+}
+
+function requestID(id){
+    console.log(id)
+    let select = 'SELECT * FROM public."user" WHERE (id = $1)';
+    return new Promise((resolve,reject)=>{
+        client.query(select,[id],function(err, result){
+            if(err){
+                console.log(err)
+                reject(err)
+            }
+            if(result.rowCount!==0){
+                console.log(result.rows[0])
+                resolve(result.rows[0])
+            }
+        })
+
+    })
+}
 
 //create test user array, will be replaced by db later
 const users = []
@@ -128,6 +170,15 @@ app.post('/register',checkNotAuthenticated,async(req,res)=>{
     }
 
     //begin to write the database section. check if this user is in the database, if yes, return the user exists error.
+    let select = escape('SELECT * FROM public."user" WHERE (email = %L)', email);
+    client.query(select,function(err, result){
+        if(err){
+            console.log("query error")
+        }
+        if(result.rowCount!==0){
+            errors.push({msg:"User email already exsited"})
+        }
+    })
 
 
     if (errors.length > 0) {
@@ -139,20 +190,30 @@ app.post('/register',checkNotAuthenticated,async(req,res)=>{
             try{
                 //this step takes both sault and hash
                 const hashedPassword = await bcrypt.hash(password,10)
-                //create the user in the database
-                users.push(
-                    {
-                        id: Date.now().toString(),
-                        email:email,
-                        password:hashedPassword
+                //for testing purpose only
+                // users.push({
+                //     id:Date.now().toString(),
+                //     email:email,
+                //     password:hashedPassword
+                // })
+                
+                //create the user in database
+                let q = 'INSERT INTO %s (email, password) VALUES (%L, %L)'
+                let insert = escape(q,'public."user"',email,hashedPassword)
+                client.query(insert,function(err,result){
+                    if(err){
+                        console.log(err)
+                    }else{
+                        console.log(`${result} has being successfully inserted`)
                     }
-                )
+                })
                 res.redirect('/login')
 
             }catch{
                 res.redirect('/register')
 
             }
+            
             //console.log(users)
     }
       
