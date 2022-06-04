@@ -9,3 +9,28 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        Int    @id @default(autoincrement())
+  useremail String @unique @db.VarChar(512)
+  password  String @db.VarChar(256)
+
+
+  Post Post[]
+  @@map("users")
+}
+
+model Post {
+  postID      Int     @id @default(autoincrement())
+  postEmail   String  @unique @db.VarChar(512)
+  postTitle   String
+  category    String?
+  description String
+  minSalary   Int?
+  maxSalary   Int?
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  @@map("posts")
+}
