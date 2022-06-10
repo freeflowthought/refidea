@@ -8,6 +8,7 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
+//this is to verify the auth.service generated jwt token is true or not
 export class JwtStrategy extends PassportStrategy(
   Strategy,
   'jwt',
@@ -18,14 +19,16 @@ export class JwtStrategy extends PassportStrategy(
   ) {
     super({
       jwtFromRequest:
+      //important verification part
         ExtractJwt.fromAuthHeaderAsBearerToken(),
+        //detect the signature is really signed by signature in the .env file
       secretOrKey: config.get('JWT_SECRET'),
     });
   }
 
   async validate(payload: {
     sub: number;
-    email: string;
+    useremail: string;
   }) {
     const user =
       await this.prisma.user.findUnique({

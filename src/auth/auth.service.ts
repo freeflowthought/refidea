@@ -1,5 +1,4 @@
 import { ForbiddenException,Injectable } from '@nestjs/common';
-import {UsersService} from '../users/users.service';
 import {JwtService} from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
@@ -69,16 +68,17 @@ export class AuthService {
     throw new ForbiddenException(
       'Credentials incorrect',
     );
+  //all the process here is to generate the jwt token
   return this.signToken((await user).id, (await user).useremail);
 }
 
 async signToken(
   Userid: number,
-  email: string,
+  useremail: string,
 ): Promise<{ access_token: string }> {
   const payload = {
     sub: Userid,
-    email,
+    useremail,
   };
   const secret = this.config.get('JWT_SECRET');
 

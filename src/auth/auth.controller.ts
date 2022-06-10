@@ -6,7 +6,7 @@ import { Body,
   Req,} from '@nestjs/common';
 import {AuthService} from './auth.service'
 import { AuthDto } from './dto';
-import * as bcrypt from 'bcrypt'
+
 
 @Controller('auth')
 export class AuthController {
