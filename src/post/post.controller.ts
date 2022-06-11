@@ -31,10 +31,16 @@ export class PostController {
       return this.postService.getUserPostById(userId,postId)
   }
 
+  
+  //get the all applications from a specific post.
+
+
   //create the post under specific userId
   @Post()
   createPost(@GetUser('id') userId:number,@Body() dto:createPostDto){
      return this.postService.createPost(userId,dto,);
   }
+
+
 
 }
