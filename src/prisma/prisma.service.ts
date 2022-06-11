@@ -9,8 +9,15 @@ export class PrismaService extends PrismaClient {
       datasources:{
         db:{
           url: config.get('DATABASE_URL'),
-        }
-      }
-    })
+        },
+      },
+    });
+    
+  }
+  cleanDB(){
+    return this.$transaction([
+      this.post.deleteMany(),
+      this.user.deleteMany(),
+    ]);
   }
 }
