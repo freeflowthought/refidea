@@ -15,11 +15,11 @@ export class PostService {
     });
   }
 
-  async getUserPostById(userId:number,postId:number)
+  async getUserPostById(userId:number,id:number)
   {
     return await this.prisma.post.findFirst({
       where: {
-        postID:postId,
+        id,
         userId,
       },
   });

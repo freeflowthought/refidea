@@ -16,21 +16,81 @@ model User {
   password  String @db.VarChar(256)
 
 
-  Post Post[]
+  Post        Post[]
+  Application Application[]
+  Profile     Profile[]
+  Picker      Picker[]
   @@map("users")
 }
 
 model Post {
-  postID      Int     @id @default(autoincrement())
-  postEmail   String  @unique @db.VarChar(512)
+  id          Int      @id @default(autoincrement())
   postTitle   String
-  category    String?
+  category    Category @default(BACKEND)
   description String
   minSalary   Int?
   maxSalary   Int?
+  createDate  DateTime @default(now())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
 
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
-
+  Application Application[]
   @@map("posts")
+}
+
+model Application {
+  id           Int      @id @default(autoincrement())
+  interest     String
+  introduction String
+  createDate   DateTime @default(now())
+  postId       Int
+  post         Post     @relation(fields: [postId], references: [id])
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  status       Status   @default(NA)
+
+  @@map("applications")
+}
+
+model Profile {
+  id           Int    @id @default(autoincrement())
+  introduction String
+  userId       Int
+  user         User   @relation(fields: [userId], references: [id])
+
+  @@map("profiles")
+  Picker Picker[]
+}
+
+model Picker {
+  id            Int     @id @default(autoincrement())
+  pIntroduction String
+  salary        Int
+  bonus         Int
+  userId        Int
+  user          User    @relation(fields: [userId], references: [id])
+  profileId     Int
+  profile       Profile @relation(fields: [profileId], references: [id])
+  pStatus       Pstatus @default(NA)
+}
+
+enum Category {
+  FRONTEND
+  BACKEND
+  FULLSTACK
+  DATA
+  BUSINESS
+}
+
+enum Status {
+  NA
+  REJECTED
+  PENDING
+  APPROVAL
+}
+
+enum Pstatus {
+  NA
+  REJECTED
+  APPROVAL
 }
