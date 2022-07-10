@@ -18,60 +18,87 @@ model User {
 
   Post        Post[]
   Application Application[]
-  Profile     Profile[]
-  Picker      Picker[]
+  Profile     Profile?
+  Picker      Picker?
   @@map("users")
 }
 
 model Post {
-  id          Int      @id @default(autoincrement())
-  postTitle   String
-  category    Category @default(BACKEND)
-  description String
-  minSalary   Int?
-  maxSalary   Int?
-  createDate  DateTime @default(now())
-  userId      Int
-  user        User     @relation(fields: [userId], references: [id])
+  id         Int      @id @default(autoincrement())
+  postTitle  String
+  category   Category @default(BACKEND)
+  job        Job?
+  createDate DateTime @default(now())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
 
   Application Application[]
   @@map("posts")
 }
 
 model Application {
-  id           Int      @id @default(autoincrement())
-  interest     String
-  introduction String
-  createDate   DateTime @default(now())
-  postId       Int
-  post         Post     @relation(fields: [postId], references: [id])
-  userId       Int
-  user         User     @relation(fields: [userId], references: [id])
-  status       Status   @default(NA)
+  id             Int          @id @default(autoincrement())
+  interest       String
+  introductionId Int
+  introduction   Introduction @relation(fields: [introductionId], references: [id])
+  createDate     DateTime     @default(now())
+  postId         Int
+  post           Post         @relation(fields: [postId], references: [id])
+  userId         Int
+  user           User         @relation(fields: [userId], references: [id])
+  status         Status       @default(NA)
 
   @@map("applications")
 }
 
+//profile is the information goes with user, introduction etc.
 model Profile {
   id           Int    @id @default(autoincrement())
   introduction String
-  userId       Int
+  userId       Int    @unique
   user         User   @relation(fields: [userId], references: [id])
 
+  Picker       Picker[]
+  Introduction Introduction?
   @@map("profiles")
-  Picker Picker[]
 }
 
+//Picker stands for agencies would pick the candidate
 model Picker {
-  id            Int     @id @default(autoincrement())
-  pIntroduction String
-  salary        Int
-  bonus         Int
-  userId        Int
-  user          User    @relation(fields: [userId], references: [id])
-  profileId     Int
-  profile       Profile @relation(fields: [profileId], references: [id])
-  pStatus       Pstatus @default(NA)
+  id        Int     @id @default(autoincrement())
+  userId    Int     @unique
+  user      User    @relation(fields: [userId], references: [id])
+  profileId Int
+  profile   Profile @relation(fields: [profileId], references: [id])
+  pStatus   Pstatus @default(NA)
+
+  Job Job[]
+  @@map("pickers")
+}
+
+//how to create Job when we first create Post/Picker object?
+model Job {
+  id          Int    @id @default(autoincrement())
+  description String
+  salary      Int?
+  bonus       Int?
+  postId      Int    @unique
+  post        Post   @relation(fields: [postId], references: [id])
+  pickerId    Int
+  pick        Picker @relation(fields: [pickerId], references: [id])
+
+
+  @@map("jobs")
+}
+
+model Introduction {
+  id           Int           @id @default(autoincrement())
+  introduction String
+  profileId    Int           @unique
+  profile      Profile       @relation(fields: [profileId], references: [id])
+  Application  Application[]
+
+  @@map("introductions")
 }
 
 enum Category {
