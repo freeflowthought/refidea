@@ -1,34 +1,41 @@
+import { Category } from '@prisma/client';
 import {
   IsNotEmpty,
   IsOptional,
   IsString,
   IsNumber,
+  IsEnum,
 } from 'class-validator';
 
 export class createPostDto{
-  @IsString()
-  @IsNotEmpty()
-  postEmail:string;
+ 
   
   @IsString()
   @IsNotEmpty()
   postTitle:string;
-  
-  @IsString()
-  @IsOptional()
-  category?:string;
-  
+
   @IsString()
   @IsNotEmpty()
   description:string;
   
+ 
   @IsNumber()
   @IsOptional()
-  minSalary?:number;
+  Salary?:number;
 
   @IsNumber()
   @IsOptional()
-  maxSalary?:number;
+  bonus?:number;
+
+
+   //Can I make it to be the enum type?
+   @IsString()
+   @IsOptional()
+   category?:string;
+
+
+
+
 
 
 
