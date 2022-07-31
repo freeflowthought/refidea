@@ -15,38 +15,40 @@ model User {
   useremail String @unique @db.VarChar(512)
   password  String @db.VarChar(256)
 
-
   Post        Post[]
-  Application Application[]
   Profile     Profile?
-  Picker      Picker?
+  Application Application[]
+  Offer       Offer[]
+
   @@map("users")
 }
 
 model Post {
-  id         Int      @id @default(autoincrement())
-  postTitle  String
-  category   Category @default(BACKEND)
-  job        Job?
-  createDate DateTime @default(now())
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id])
+  id          Int      @id @default(autoincrement())
+  postTitle   String
+  description String
+  salary      Int?
+  bonus       Int?
+  category    Category @default(BACKEND)
+  createDate  DateTime @default(now())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
 
   Application Application[]
+  Offer       Offer[]
+
   @@map("posts")
 }
 
 model Application {
-  id             Int          @id @default(autoincrement())
-  interest       String
-  introductionId Int
-  introduction   Introduction @relation(fields: [introductionId], references: [id])
-  createDate     DateTime     @default(now())
-  postId         Int
-  post           Post         @relation(fields: [postId], references: [id])
-  userId         Int
-  user           User         @relation(fields: [userId], references: [id])
-  status         Status       @default(NA)
+  id         Int      @id @default(autoincrement())
+  interest   String
+  createDate DateTime @default(now())
+  postId     Int
+  post       Post     @relation(fields: [postId], references: [id])
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  status     Status   @default(NA)
 
   @@map("applications")
 }
@@ -58,47 +60,20 @@ model Profile {
   userId       Int    @unique
   user         User   @relation(fields: [userId], references: [id])
 
-  Picker       Picker[]
-  Introduction Introduction?
   @@map("profiles")
 }
 
-//Picker stands for agencies would pick the candidate
-model Picker {
-  id        Int     @id @default(autoincrement())
-  userId    Int     @unique
-  user      User    @relation(fields: [userId], references: [id])
-  profileId Int
-  profile   Profile @relation(fields: [profileId], references: [id])
-  pStatus   Pstatus @default(NA)
+//can it be replaced with the many to many relationship in between the profile and post?
+model Offer {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  createDate DateTime @default(now())
+  pStatus    Pstatus  @default(NA)
+  postId     Int
+  post       Post     @relation(fields: [postId], references: [id])
 
-  Job Job[]
-  @@map("pickers")
-}
-
-//how to create Job when we first create Post/Picker object?
-model Job {
-  id          Int    @id @default(autoincrement())
-  description String
-  salary      Int?
-  bonus       Int?
-  postId      Int    @unique
-  post        Post   @relation(fields: [postId], references: [id])
-  pickerId    Int
-  pick        Picker @relation(fields: [pickerId], references: [id])
-
-
-  @@map("jobs")
-}
-
-model Introduction {
-  id           Int           @id @default(autoincrement())
-  introduction String
-  profileId    Int           @unique
-  profile      Profile       @relation(fields: [profileId], references: [id])
-  Application  Application[]
-
-  @@map("introductions")
+  @@map("offers")
 }
 
 enum Category {
