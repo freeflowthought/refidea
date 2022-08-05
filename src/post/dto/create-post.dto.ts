@@ -1,4 +1,3 @@
-import { Category } from '@prisma/client';
 import {
   IsNotEmpty,
   IsOptional,
@@ -8,7 +7,7 @@ import {
 } from 'class-validator';
 
 export class createPostDto{
- 
+  
   
   @IsString()
   @IsNotEmpty()
@@ -27,7 +26,7 @@ export class createPostDto{
   @IsOptional()
   bonus?:number;
 
-
+   
    //Can I make it to be the enum type?
    @IsString()
    @IsOptional()
@@ -36,8 +35,6 @@ export class createPostDto{
 
 
 
-
-
-
-
 }
+
+
