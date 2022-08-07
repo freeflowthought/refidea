@@ -6,6 +6,8 @@ import {
   IsEnum,
 } from 'class-validator';
 
+import { Category } from '@prisma/client';
+
 export class createPostDto{
   
   
@@ -20,7 +22,7 @@ export class createPostDto{
  
   @IsNumber()
   @IsOptional()
-  Salary?:number;
+  salary?:number;
 
   @IsNumber()
   @IsOptional()
@@ -28,9 +30,9 @@ export class createPostDto{
 
    
    //Can I make it to be the enum type?
-   @IsString()
+   @IsEnum(Category)
    @IsOptional()
-   category?:string;
+   category?:Category;
 
 
 

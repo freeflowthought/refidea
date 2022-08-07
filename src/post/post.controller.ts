@@ -19,6 +19,11 @@ import {createPostDto} from './dto/create-post.dto'
 export class PostController {
   constructor(private postService:PostService){}
 
+  @Get(':all')
+  getAllPosts(){
+    return this.postService.getAllPosts()
+  }
+
   //get all the posts of this userID
   @Get()
   getUserPosts(@GetUser('id') userId:number){

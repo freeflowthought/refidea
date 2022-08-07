@@ -35,8 +35,7 @@ model Post {
   user        User     @relation(fields: [userId], references: [id])
 
   Application Application[]
-  offer       Offer[]
-  MakeOffer   MakeOffer[]
+  Offer       Offer[]
 
   @@map("posts")
 }
@@ -65,25 +64,16 @@ model Profile {
 }
 
 model Offer {
-  id         Int         @id @default(autoincrement())
   //this is from post to other users.
   userId     Int
-  user       User        @relation(fields: [userId], references: [id])
-  createDate DateTime    @default(now())
-  pStatus    Pstatus     @default(NA)
-  Post       Post[]
-  MakeOffer  MakeOffer[]
+  createDate DateTime @default(now())
+  pStatus    Pstatus  @default(NA)
+  postId     Int
+  User       User     @relation(fields: [userId], references: [id])
+  Post       Post     @relation(fields: [postId], references: [id])
 
+  @@id([userId, postId])
   @@map("offers")
-}
-
-//do I need to create a many-to-many relationship for this?
-model MakeOffer {
-  id      Int    @id @default(autoincrement())
-  post    Post?  @relation(fields: [postId], references: [id])
-  offer   Offer? @relation(fields: [offerId], references: [id])
-  postId  Int
-  offerId Int
 }
 
 enum Category {
