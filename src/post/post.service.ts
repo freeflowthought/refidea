@@ -102,8 +102,17 @@ async findAllAppsByPost(userId:number,postId:number,appId:number){
     where:{
       postId:postId,
       id:appId,
+    },
+    include: {
+       user:{
+        include:{
+          Profile: true
+        }
+       }
     }
   })
+
+  return applications
 
 }
 
