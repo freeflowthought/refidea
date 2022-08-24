@@ -13,6 +13,7 @@ import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import {PostService} from './post.service'
 import {createPostDto} from './dto/create-post.dto'
+import { editPostDto } from './dto';
 
 @UseGuards(JwtGuard)
 @Controller('post')
@@ -37,7 +38,7 @@ export class PostController {
   }
 
   
-  //get the all applications from a specific post.
+
 
 
   //create the post under specific userId
@@ -45,6 +46,26 @@ export class PostController {
   createPost(@GetUser('id') userId:number,@Body() dto:createPostDto){
      return this.postService.createPost(userId,dto,);
   }
+
+  //edit specific post 
+  @Patch(':id')
+  editPost(@GetUser(':id') userId:number,@Param('id',ParseIntPipe) postId:number,@Body() dto:editPostDto){
+      return this.postService.editPost(userId,postId,dto,)
+  }
+
+
+
+  //get all the applications under the post
+  //  posts/5/applications
+  @Get(':id/applications')
+  getApplicationByPost(@GetUser('id') userId:number,@Param('id',ParseIntPipe) postId:number){}
+
+//get specific application under the specific post id
+//  posts/5/applications/7
+@Get(':id/applications/appId')
+getApplicationById(@GetUser('id') userId:number,@Param('id',ParseIntPipe) postId:number,@Param('appId',ParseIntPipe) appId:number){}
+
+
 
 
 

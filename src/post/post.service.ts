@@ -1,4 +1,6 @@
 import { Injectable,ForbiddenException } from '@nestjs/common';
+import { profile } from 'console';
+import { appendFile } from 'fs';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { createPostDto,editPostDto } from './dto';
 
@@ -55,6 +57,8 @@ async editPost(userId:number,postId:number,dto:editPostDto){
       );
      }
 
+     //check if the post has already had the application, if it has already had the application, then throw forbidden Exception
+
      return this.prisma.post.update({
       where:{
          id:postId,
@@ -66,10 +70,42 @@ async editPost(userId:number,postId:number,dto:editPostDto){
 }
 
 
-//below are the confusion
-//get all the applications under the post, (with this, I then need to retrieve all the applicaion with accepted status)
+//temporary making the decison to write the application logic to find all the applications from the post service module
+async findAllApps(userId:number,postId:number){
+  // what needs to be done: to combine with the profile table use of the join
+  const post = await this.prisma.post.findUnique({
+    where: {
+      id: postId
+    },
+    include:{
+      Application: {
+        include: {
+          user: {
+            include: {
+              Profile: true
+            }
+          }
+        }
+      }
+    }
+  })
+  //get all the applications
+  return post.Application
+     //return joined object of profiles and applications
+    
+}
 
-//get all the posts sent to other user's profile
+//temporary making the decison to write the application logic from post service to find all the applications for specific post
+async findAllAppsByPost(userId:number,postId:number,appId:number){
+  // what needs to be done to combine the profile table with the join
+  const applications = await this.prisma.application.findMany({
+    where:{
+      postId:postId,
+      id:appId,
+    }
+  })
+
+}
 
 
 }
