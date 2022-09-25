@@ -96,24 +96,20 @@ async findAllApps(userId:number,postId:number){
 }
 
 //temporary making the decison to write the application logic from post service to find all the applications for specific post
-async findAllAppsByPost(userId:number,postId:number,appId:number){
+async findAllAppsByPost(postId:number){
   // what needs to be done to combine the profile table with the join
-  const applications = await this.prisma.application.findMany({
+  return await this.prisma.application.findMany({
     where:{
       postId:postId,
-      id:appId,
     },
     include: {
        user:{
         include:{
-          Profile: true
+          Profile: true,
         }
        }
     }
   })
-
-  return applications
-
 }
 
 

@@ -58,7 +58,10 @@ export class PostController {
   //get all the applications under the post
   //  posts/5/applications
   @Get(':id/applications')
-  getApplicationByPost(@GetUser('id') userId:number,@Param('id',ParseIntPipe) postId:number){}
+  getApplicationByPost(@Param('id',ParseIntPipe) postId:number){
+    let applications = this.postService.findAllAppsByPost(postId)
+    return applications
+  }
 
 //get specific application under the specific post id
 //  posts/5/applications/7

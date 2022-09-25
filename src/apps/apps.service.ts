@@ -14,6 +14,14 @@ export class AppsService {
      })
   }
 
-
+  async createApplication(userId:number, postId:number, interest:string) {
+    return await this.prsima.application.create({
+      data: {
+        userId:userId,
+        postId:postId,
+        interest:interest
+      }
+    })
+  }
 
 }
