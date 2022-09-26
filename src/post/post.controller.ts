@@ -31,10 +31,10 @@ export class PostController {
       return this.postService.getPosts(userId)
   }
 
-  //get the specific post by this userID
+  //get the specific post
   @Get(':id')
-  getUserPostById(@GetUser('id') userId:number,@Param('id',ParseIntPipe) postId:number){
-      return this.postService.getUserPostById(userId,postId)
+  getUserPostById(@Param('id',ParseIntPipe) postId:number){
+      return this.postService.getUserPostById(postId)
   }
 
   
@@ -66,7 +66,7 @@ export class PostController {
 //get specific application under the specific post id
 //  posts/5/applications/7
 @Get(':id/applications/appId')
-getApplicationById(@GetUser('id') userId:number,@Param('id',ParseIntPipe) postId:number,@Param('appId',ParseIntPipe) appId:number){}
+getApplicationById(@Param('id',ParseIntPipe) postId:number,@Param('appId',ParseIntPipe) appId:number){}
 
 
 

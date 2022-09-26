@@ -3,8 +3,9 @@ import { profile } from 'console';
 import { appendFile } from 'fs';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { createPostDto,editPostDto } from './dto';
-
-
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaError } from 'src/utils/prismaError';
+import { PostNotFoundException } from './exceptions/postNotFound.exception';
 @Injectable()
 export class PostService {
   constructor(private prisma: PrismaService){}
@@ -21,12 +22,11 @@ export class PostService {
     });
   }
 
-  async getUserPostById(userId:number,id:number)
+  async getUserPostById(id:number)
   {
     return await this.prisma.post.findFirst({
       where: {
         id,
-        userId,
       },
   });
 
@@ -71,7 +71,7 @@ async editPost(userId:number,postId:number,dto:editPostDto){
 
 
 //temporary making the decison to write the application logic to find all the applications from the post service module
-async findAllApps(userId:number,postId:number){
+async findAllApps(postId:number){
   // what needs to be done: to combine with the profile table use of the join
   const post = await this.prisma.post.findUnique({
     where: {
@@ -98,18 +98,27 @@ async findAllApps(userId:number,postId:number){
 //temporary making the decison to write the application logic from post service to find all the applications for specific post
 async findAllAppsByPost(postId:number){
   // what needs to be done to combine the profile table with the join
-  return await this.prisma.application.findMany({
-    where:{
-      postId:postId,
-    },
-    include: {
-       user:{
-        include:{
-          Profile: true,
-        }
-       }
+  try{
+    return await this.prisma.application.findMany({
+      where:{
+        postId:postId,
+      },
+      include: {
+         user:{
+          include:{
+            Profile: true,
+          }
+         }
+      }
+    })
+
+  }catch(error){
+    if(error instanceof PrismaClientKnownRequestError && error.code === PrismaError.RecordDoesNotExist){
+      throw new PostNotFoundException(postId)
     }
-  })
+    throw error;
+  }
+  
 }
 
 

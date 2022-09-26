@@ -16,6 +16,11 @@ export class AuthService {
     ) {}
 
   async signup(dto:AuthDto){
+   // add the logic
+   if(dto.password.length < 8){
+    throw "ilegal password input"
+   }
+   
     //transfer the password to the hashedpassword
    
     const hash = await bcrypt.hash(dto.password,10) 
