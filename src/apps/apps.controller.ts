@@ -22,7 +22,7 @@ export class AppsController {
 
   }
 
-  @Get('my')
+  @Get(':id')
   getMyApps(@GetUser('id') userId:number){
      return this.appService.getMyapps(userId)
   }

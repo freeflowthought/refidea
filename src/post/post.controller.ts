@@ -25,7 +25,7 @@ export class PostController {
     return this.postService.getAllPosts()
   }
 
-  //get all the posts of this userID
+  //user route
   @Get()
   getUserPosts(@GetUser('id') userId:number){
       return this.postService.getPosts(userId)

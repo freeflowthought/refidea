@@ -6,6 +6,9 @@ import { ConfigModule } from '@nestjs/config';
 import { PostController } from './post/post.controller';
 import { PostModule } from './post/post.module';
 import { AppsModule } from './apps/apps.module';
+import { ProfileController } from './profile/profile.controller';
+import { ProfileService } from './profile/profile.service';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -14,7 +17,6 @@ import { AppsModule } from './apps/apps.module';
       }),
     AuthModule,
      UsersModule, 
-     PrismaModule, PostModule, AppsModule],
-
+     PrismaModule, PostModule, AppsModule, ProfileModule],
 })
 export class AppModule {}
