@@ -98,25 +98,34 @@ async findAllApps(postId:number){
 //temporary making the decison to write the application logic from post service to find all the applications for specific post
 async findAllAppsByPost(postId:number){
   // I should only filter the one who has the profile
-    const app = await this.prisma.application.findMany({
-      where:{
-        postId:postId,
-
-      },
-      include: {
-         user:{
-          include:{
-            Profile: true,
+  const app = await this.prisma.application.findMany({
+    where:{
+      postId:postId,
+      user: {
+        Profile: {
+          some: {}
+        }
+       }
+    },
+    include: {
+       user:{
+        include:{
+          Profile: {
+            select:{
+              introduction:true
+            }
           }
-         }
-      }
-    })
+        }
+       }
+    }
+  })
 
-    app.filter(app => {app.user.Profile.introduction !== null})
-    return app
-
+return app
+    
   
 }
+
+
 
 
 }
