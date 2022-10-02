@@ -97,11 +97,11 @@ async findAllApps(postId:number){
 
 //temporary making the decison to write the application logic from post service to find all the applications for specific post
 async findAllAppsByPost(postId:number){
-  // what needs to be done to combine the profile table with the join
-  try{
-    return await this.prisma.application.findMany({
+  // I should only filter the one who has the profile
+    const app = await this.prisma.application.findMany({
       where:{
         postId:postId,
+
       },
       include: {
          user:{
@@ -112,12 +112,9 @@ async findAllAppsByPost(postId:number){
       }
     })
 
-  }catch(error){
-    if(error instanceof PrismaClientKnownRequestError && error.code === PrismaError.RecordDoesNotExist){
-      throw new PostNotFoundException(postId)
-    }
-    throw error;
-  }
+    app.filter(app => {app.user.Profile.introduction !== null})
+    return app
+
   
 }
 

@@ -22,9 +22,9 @@ export class AppsController {
 
   }
 
-  @Get(':id')
-  getMyApps(@GetUser('id') userId:number){
-     return this.appService.getMyapps(userId)
+  @Get('')
+  getMyApps(@GetUser() user:User){
+     return this.appService.getMyapps(user.id)
   }
 
   //Create an application to a post
