@@ -1,22 +1,35 @@
 import { Injectable,ForbiddenException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { createAppDto } from './dto';
 
 @Injectable()
 export class AppsService {
-  constructor(private prsima: PrismaService){
+  constructor(private prisma: PrismaService){
   }
 
   async getMyapps(userId:number){
-     return await this.prsima.application.findMany({
+     return await this.prisma.application.findMany({
       where:{
         userId: userId
       },
      })
   }
 
-  async createApplication(userId:number, postId:number, interest:string) {
-    //1: if the user has already made the application to the post, then throw a forbidden error
-   const application = await this.prsima.application.findMany({
+  async createApplication(userId:number, postId:number, dto: createAppDto) {
+    //1: with this postId, we should be able to find the post
+    const post = await this.prisma.post.findUnique({
+      where:{
+        id:postId
+      }
+    })
+    if (!post){
+      throw new ForbiddenException(
+        'Access to resources denied',
+      );
+    }
+
+    //2: if the user has already made the application to the post, then throw a forbidden error
+   const application = await this.prisma.application.findMany({
       where:{
         postId:postId,
         userId:userId
@@ -30,15 +43,29 @@ export class AppsService {
     }
 
 
-    return await this.prsima.application.create({
-      data: {
-        userId:userId,
-        postId:postId,
-        interest:interest
+    class g {
+      interest: String;
+      userId: number;
+      postId: number;
+      constructor() {
+          this.interest = "hi";
+          this.userId = 4;
+          this.postId = 5;
       }
+    }
+  
+    let f = new g();
+    return await this.prisma.application.create({
+      data: {
+        ...f,
+  
+      },
     })
-  }
+
+
+  //get App by appId
 
   //we don't want to allow user to delete or edit his application
 
+}
 }
