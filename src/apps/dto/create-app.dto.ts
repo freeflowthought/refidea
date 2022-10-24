@@ -7,6 +7,6 @@ import {
   export class createAppDto {
     @IsString()
     @IsNotEmpty()
-    interest: String
+    interest: string
 
   }

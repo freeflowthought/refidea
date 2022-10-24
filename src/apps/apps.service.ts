@@ -43,21 +43,12 @@ export class AppsService {
     }
 
 
-    class g {
-      interest: String;
-      userId: number;
-      postId: number;
-      constructor() {
-          this.interest = "hi";
-          this.userId = 4;
-          this.postId = 5;
-      }
-    }
-  
-    let f = new g();
+    
     return await this.prisma.application.create({
       data: {
-        ...f,
+        userId,
+        postId,
+        ...dto,
   
       },
     })
