@@ -65,6 +65,7 @@ model Profile {
 
 model Offer {
   //this is from post to other users.
+  id         Int    @id @default(autoincrement())
   userId     Int
   createDate DateTime @default(now())
   pStatus    Pstatus  @default(NA)
@@ -72,7 +73,6 @@ model Offer {
   User       User     @relation(fields: [userId], references: [id])
   Post       Post     @relation(fields: [postId], references: [id])
 
-  @@id([userId, postId])
   @@map("offers")
 }
 
