@@ -9,6 +9,9 @@ import { AppsModule } from './apps/apps.module';
 import { ProfileController } from './profile/profile.controller';
 import { ProfileService } from './profile/profile.service';
 import { ProfileModule } from './profile/profile.module';
+import { OffersController } from './offers/offers.controller';
+import { OffersService } from './offers/offers.service';
+import { OffersModule } from './offers/offers.module';
 
 @Module({
   imports: [
@@ -17,6 +20,8 @@ import { ProfileModule } from './profile/profile.module';
       }),
     AuthModule,
      UsersModule, 
-     PrismaModule, PostModule, AppsModule, ProfileModule],
+     PrismaModule, PostModule, AppsModule, ProfileModule, OffersModule],
+  controllers: [OffersController, ProfileController],
+  providers: [OffersService,ProfileService],
 })
 export class AppModule {}
