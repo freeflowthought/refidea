@@ -6,11 +6,10 @@ import {
     IsEnum,
   } from 'class-validator';
   
-  import { Category, Status } from '@prisma/client';
+  import {  Status } from '@prisma/client';
 
   export class editAppsDto {
 
-    @IsEnum(Category)
+    @IsEnum(Status)
     status?:Status;
-
-  }
+}

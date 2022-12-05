@@ -13,7 +13,7 @@ import { User } from '@prisma/client';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { AppsService } from './apps.service';
-import { createAppDto } from './dto';
+import { createAppDto,editAppsDto} from './dto';
 
 @UseGuards(JwtGuard)
 @Controller('apps')
@@ -32,6 +32,11 @@ export class AppsController {
   @Post('create/:postid')
   createApplicationForPost(@GetUser() user:User, @Param('postid',ParseIntPipe) postId:number,dto:createAppDto) {
     return this.appService.createApplication(user.id, postId,dto);   
+  }
+
+  @Patch(':id')
+  setStatus(@Param('id',ParseIntPipe) appId:number,@GetUser() user:User,dto:editAppsDto){
+    return this.appService.setAppStatus(appId,user.id,dto,);
   }
 
 }
