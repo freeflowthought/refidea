@@ -35,7 +35,8 @@ export class AppsController {
   }
 
   @Patch(':id')
-  setStatus(@Param('id',ParseIntPipe) appId:number,@GetUser() user:User,dto:editAppsDto){
+  setStatus(@Param('id',ParseIntPipe) appId:number,@GetUser() user:User,@Body() dto:editAppsDto){
+    console.log("controller dto is" + dto)
     return this.appService.setAppStatus(appId,user.id,dto,);
   }
 

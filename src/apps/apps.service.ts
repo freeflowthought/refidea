@@ -61,6 +61,11 @@ export class AppsService {
 
   //below function should set up the status for application. only the poster has the authority to set up.
   async setAppStatus(appId:number,userId:number,dto:editAppsDto){
+    
+    console.log("appId is: " + appId)
+    console.log("logined in userID is: " + userId)
+    console.log("dto is:  "+ dto)
+    
     //get the appId's belated postId
     const postId = await this.prisma.application.findUnique({
       where:{
@@ -70,8 +75,9 @@ export class AppsService {
         postId:true
        }
     })
-
-    console.log(postId)
+    
+    console.log("postId is: " + postId.postId)
+    
     //find the userId for this post Id
     const mtchUser = await this.prisma.post.findUnique({
       where:{
@@ -82,7 +88,7 @@ export class AppsService {
       }
     })
 
-    console.log(mtchUser)
+    console.log("mtchUserID:" + mtchUser.userId)
     if (mtchUser.userId != userId){
        throw new ForbiddenException('Access denied, you have no authority')
     }else{
@@ -97,8 +103,8 @@ export class AppsService {
         }
       })
       console.log(updatedApplication)
-      console.log(dto)
-      console.log({...dto})
+      //console.log(dto)
+      //console.log({...dto})
       return updatedApplication
 
 

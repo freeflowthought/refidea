@@ -59,7 +59,6 @@ model Profile {
   introduction String
   userId       Int    @unique
   user         User   @relation(fields: [userId], references: [id])
-
   @@map("profiles")
 }
 
