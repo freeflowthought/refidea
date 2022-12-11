@@ -2,6 +2,7 @@ import {Body,
   Controller,
   Delete,
   Get,
+  Req,
   HttpCode,
   HttpStatus,
   Param,
@@ -14,6 +15,8 @@ import { JwtGuard } from 'src/auth/guard';
 import {PostService} from './post.service'
 import {createPostDto} from './dto/create-post.dto'
 import { editPostDto } from './dto';
+import { Request } from 'express';
+import { Status } from '@prisma/client';
 
 @UseGuards(JwtGuard)
 @Controller('post')
@@ -32,6 +35,7 @@ export class PostController {
   }
 
   //get the specific post
+  //this function is buggy
   @Get(':id')
   getUserPostById(@Param('id',ParseIntPipe) postId:number){
       return this.postService.getUserPostById(postId)
@@ -57,16 +61,22 @@ export class PostController {
 
   //get all the applications under the post
   //  posts/5/applications
+
+  //Test Fails on this controller as well
   @Get(':id/applications')
   getApplicationByPost(@Param('id',ParseIntPipe) postId:number){
     let applications = this.postService.findAllAppsByPost(postId)
     return applications
   }
 
-//get specific application under the specific post id
-//  posts/5/applications/7
-@Get(':id/applications/appId')
-getApplicationById(@Param('id',ParseIntPipe) postId:number,@Param('appId',ParseIntPipe) appId:number){}
+  //get all the rejected applications under the post
+  //  posts/5/rejected
+  @Get(':id/:status')
+  getRejectedApps(@Param('id',ParseIntPipe) postId:number,@Param('status') status:Status){
+     return this.postService.filterAppsStatus(postId,status)
+  }
+
+
 
 
 

@@ -2,7 +2,7 @@ import { Injectable,ForbiddenException } from '@nestjs/common';
 import { profile } from 'console';
 import { appendFile } from 'fs';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { createPostDto,editPostDto } from './dto';
+import { createPostDto,editPostDto, filterStatusDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaError } from 'src/utils/prismaError';
 import { PostNotFoundException } from './exceptions/postNotFound.exception';
@@ -22,13 +22,14 @@ export class PostService {
     });
   }
 
-  async getUserPostById(id:number)
+  async getUserPostById(postId:number)
   {
-    return await this.prisma.post.findFirst({
+    const post = await this.prisma.post.findUnique({
       where: {
-        id,
-      },
+        id:postId
+      }
   });
+  return post;
 
 }
 
@@ -123,6 +124,31 @@ async findAllAppsByPost(postId:number){
 return app
     
   
+}
+
+async filterAppsStatus(postId:number,status){
+  const app = await this.prisma.application.findMany({
+    where:{
+      postId:postId,
+      status:status,
+      user: {
+        Profile: {
+          some: {}
+        }
+       }
+    },
+    include: {
+       user:{
+        include:{
+          Profile: {
+            select:{
+              introduction:true
+            }
+          }
+        }
+       }
+    }
+  })
 }
 
 
