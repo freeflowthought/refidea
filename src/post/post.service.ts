@@ -102,11 +102,6 @@ async findAllAppsByPost(postId:number){
   const app = await this.prisma.application.findMany({
     where:{
       postId:postId,
-      user: {
-        Profile: {
-          some: {}
-        }
-       }
     },
     include: {
        user:{
@@ -120,8 +115,20 @@ async findAllAppsByPost(postId:number){
        }
     }
   })
+  console.log(app)
+  let filteredApp = []
+  for (var i = 0; i < app.length;i++){
+    var object = app[i];
+    for (var property in object){
+      if (property == 'user' && object[property].Profile != null){
+        filteredApp.push(object)
+      }
+    }
+  }
 
-return app
+  return filteredApp
+
+
     
   
 }
@@ -131,11 +138,6 @@ async filterAppsStatus(postId:number,status){
     where:{
       postId:postId,
       status:status,
-      user: {
-        Profile: {
-          some: {}
-        }
-       }
     },
     include: {
        user:{
