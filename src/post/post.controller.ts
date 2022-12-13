@@ -72,7 +72,7 @@ export class PostController {
   //get all the rejected applications under the post
   //  posts/5/rejected
   @Get(':id/:status')
-  getRejectedApps(@Param('id',ParseIntPipe) postId:number,@Param('status') status:Status){
+  filterAppsStatus(@Param('id',ParseIntPipe) postId:number,@Param('status') status:Status){
      //handling the extra case for the status is not one of the status
      return this.postService.filterAppsStatus(postId,status)
   }
