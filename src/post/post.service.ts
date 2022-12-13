@@ -151,6 +151,18 @@ async filterAppsStatus(postId:number,status){
        }
     }
   })
+
+  let filteredApp = []
+  for (var i = 0; i < app.length;i++){
+    var object = app[i];
+    for (var property in object){
+      if (property == 'user' && object[property].Profile != null){
+        filteredApp.push(object)
+      }
+    }
+  }
+
+  return filteredApp
 }
 
 
