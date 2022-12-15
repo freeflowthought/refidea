@@ -8,14 +8,24 @@ export class OffersService {
     constructor(private prisma: PrismaService){}
 
     async sendOffer(userId: number, postId:number){
-        const offer = await this.prisma.offer.create({
+        //we don't allow a postId to send the offer multiple time, so we firstly will query if the postId already exists or not
+        let offer = await this.prisma.offer.findMany({
+            where:{
+                userId:userId,
+                postId:postId
+            }
+        })
+        if(offer){
+            throw new ForbiddenException(
+                'Access to resources denied',
+              );
+        }
+        return await this.prisma.offer.create({
             data:{
               userId,
               postId,
             },
           });
-        
-          return offer
 
     }
 
