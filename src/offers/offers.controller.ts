@@ -40,5 +40,13 @@ export class OffersController {
         return this.offerService.getTopSalary(user.id)
     }
 
+    //get Top 5 Salary offers
+    @Get("goodSalary")
+    async getGoodOffer(@GetUser() user:User){
+
+        let result  = this.offerService.getTop5Offers(user.id)
+        return result
+    }
+
 
 }

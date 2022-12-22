@@ -1,6 +1,7 @@
 import { Injectable,ForbiddenException } from '@nestjs/common';
 import { networkInterfaces } from 'os';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client'
 
 
 @Injectable()
@@ -67,6 +68,13 @@ export class OffersService {
         let maxSalary = getMax(offer)
         return maxSalary
 
+    }
+
+    async getTop5Offers(userId:number){
+        //this query is not getting the result in which I need
+        let result =  await this.prisma.$queryRaw(Prisma.sql`SELECT offers."pStatus",posts."postTitle",posts.id as post_Id,posts."createDate",posts.description,posts.category,posts.salary FROM public.offers left join public.posts ON posts.id = offers."postId" where offers."userId" = ${userId} and posts.salary is not null ORDER by posts.salary DESC LIMIT 5`)
+        console.log(result)
+        return result
     }
 
     

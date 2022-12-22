@@ -116,6 +116,8 @@ async findAllAppsByPost(postId:number){
     }
   })
   console.log(app)
+  //this is not the best way to solve the problem as the for loop is very inefficient to do the querying.
+  //refactor this part later
   let filteredApp = []
   for (var i = 0; i < app.length;i++){
     var object = app[i];
