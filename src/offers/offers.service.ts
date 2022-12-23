@@ -1,6 +1,7 @@
 import { Injectable,ForbiddenException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client'
+import { editOfferDto } from './dto';
 
 
 @Injectable()
@@ -84,6 +85,39 @@ export class OffersService {
         let result =  await this.prisma.$queryRaw(Prisma.sql`SELECT offers."pStatus",posts."postTitle",posts.id as post_Id,posts."createDate",posts.description,posts.category,posts.salary FROM public.offers left join public.posts ON posts.id = offers."postId" where offers."userId" = ${userId} and posts.salary is not null ORDER by posts.salary DESC LIMIT 5`)
         console.log(result)
         return result
+    }
+
+    //a function to set the offer status, we need to make sure that the person who has the authority to set the status for offer
+    //the current authenticated userId needs to be the same userId on Offer table schema, the status needs to match with the pStatus enum
+    async setOfferStatus(offerId:number, userId:number,dto:editOfferDto){
+
+        const offer = await this.prisma.offer.findUnique({
+            where:{
+              id:offerId
+            },
+             select:{
+              userId:true
+             }
+          })
+
+          console.log(offer.userId)
+          if (offer.userId != userId){
+            throw new ForbiddenException('Access denied, you have no authority')
+          }else{
+            let updatedOffer = await this.prisma.offer.update({
+                where:{
+                  id: offerId
+                },
+                data:{
+                  ...dto,
+                }
+              })
+
+              console.log(updatedOffer)
+              return updatedOffer
+
+          }
+       
     }
 
 

@@ -23,7 +23,7 @@ import { Status } from '@prisma/client';
 export class PostController {
   constructor(private postService:PostService){}
 
-  @Get(':all')
+  @Get('/all')
   getAllPosts(){
     return this.postService.getAllPosts()
   }
