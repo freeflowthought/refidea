@@ -120,6 +120,17 @@ export class OffersService {
        
     }
 
+    async filterOfferStatus(userId:number,status){
+        let offer = await this.prisma.offer.findMany({
+            where:{
+                userId:userId,
+                pStatus:status
+            }
+        })
+        return offer
+
+    }
+
 
 
 

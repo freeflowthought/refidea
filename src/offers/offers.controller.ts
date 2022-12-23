@@ -10,7 +10,7 @@ import {Body,
     Patch,
     Post,
     UseGuards,} from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Pstatus, User } from '@prisma/client';
   import { GetUser } from 'src/auth/decorator';
   import { JwtGuard } from 'src/auth/guard';
 import { editOfferDto } from './dto';
@@ -59,6 +59,12 @@ export class OffersController {
     setOfferStatus(@Param('id',ParseIntPipe) offerId: number, @GetUser() user:User,@Body() dto:editOfferDto){
         return this.offerService.setOfferStatus(offerId,user.id,dto)
     }
+
+    @Get('/:pStatus')
+    filterOfferStatus(@GetUser() user:User,@Param('pStatus') pStatus:Pstatus){
+        return this.offerService.filterOfferStatus(user.id,pStatus)
+    }
+
 
 
 }
