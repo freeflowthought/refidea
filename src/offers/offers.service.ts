@@ -48,10 +48,16 @@ export class OffersService {
 
     //get the maximum salary  - the test result shows there is a problem with this function
     async getTopSalary(userId:number){
+        //interesting to see that the syntax is not first
         let offer = await this.prisma.offer.findMany({
             
             where:{
                 userId,
+                NOT:{
+                    Post:{
+                        salary:null
+                    }
+                }
             },
             
             include:{
@@ -61,10 +67,15 @@ export class OffersService {
                       }
                 }
             },
+            take:1,
+            orderBy:{
+                Post:{
+                    salary:"desc"
+                }
+            }
         })
-        console.log(offer)
-        let maxSalary = getMax(offer)
-        return maxSalary
+        
+        return offer
 
     }
 
