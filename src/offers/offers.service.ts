@@ -1,5 +1,4 @@
 import { Injectable,ForbiddenException } from '@nestjs/common';
-import { networkInterfaces } from 'os';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client'
 
@@ -49,7 +48,6 @@ export class OffersService {
 
     //get the maximum salary  - the test result shows there is a problem with this function
     async getTopSalary(userId:number){
-
         let offer = await this.prisma.offer.findMany({
             
             where:{
@@ -64,7 +62,7 @@ export class OffersService {
                 }
             },
         })
-        // Is this going to work or not?  I don't know
+        console.log(offer)
         let maxSalary = getMax(offer)
         return maxSalary
 
@@ -76,6 +74,9 @@ export class OffersService {
         console.log(result)
         return result
     }
+
+
+
 
     
 

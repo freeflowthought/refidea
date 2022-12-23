@@ -2,6 +2,7 @@ import {Body,
     Controller,
     Delete,
     Get,
+    Next,
     HttpCode,
     HttpStatus,
     Param,
@@ -22,31 +23,33 @@ export class OffersController {
     
     //create the offer
     @Post()
-    async sendOffer(@GetUser() user:User, @Body() postId:number){
+    sendOffer(@GetUser() user:User, @Body() postId:number){
         return this.offerService.sendOffer(user.id,postId)
     }
 
 
-    //getRecentOffers
-    @Get(':recent')
-    async getRecentOffers(@GetUser() user:User){
+    //getRecentOffers(), It looks like the problem has something to do with the middleware next
+    @Get('/recent')
+    getRecentOffers(@GetUser() user:User){
         return this.offerService.getRecentOffers(user.id)
 
     }
+  
 
     //get Maximum Salary offered
-    @Get("topSalary")
-    async getTopOffer(@GetUser() user:User){
+    @Get('/topSalary')
+    getTopOffer(@GetUser() user:User){
         return this.offerService.getTopSalary(user.id)
+        
     }
 
     //get Top 5 Salary offers
-    @Get("goodSalary")
-    async getGoodOffer(@GetUser() user:User){
+    @Get('/goodSalary')
+    getGoodOffer(@GetUser() user:User){
 
-        let result  = this.offerService.getTop5Offers(user.id)
-        return result
+        return this.offerService.getTop5Offers(user.id)
     }
+    
 
 
 }
