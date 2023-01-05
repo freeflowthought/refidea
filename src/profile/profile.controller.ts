@@ -10,6 +10,7 @@ import {Body,
     Post,
     UseGuards,} from '@nestjs/common';
 import { GetUser } from 'src/auth/decorator';
+import {User} from '@prisma/client'
 import { JwtGuard } from 'src/auth/guard';
 import { createProfileDto, editProfileDto } from './dto';
 import { ProfileService } from './profile.service';
@@ -20,18 +21,18 @@ export class ProfileController {
     constructor(private profileService:ProfileService){}
 
     @Post()
-    createProfile(@GetUser('id') userId:number,@Body() dto:createProfileDto ){
-         return this.profileService.createProfile(userId,dto,);
+    createProfile(@GetUser() user:User,@Body() dto:createProfileDto ){
+         return this.profileService.createProfile(user.id,dto,);
     }
 
     @Patch()
-    editProfile(@GetUser('id') userId:number,@Body() dto:editProfileDto){
-        return this.profileService.editProfile(userId,dto,)
+    editProfile(@GetUser() user:User,@Body() dto:editProfileDto){
+        return this.profileService.editProfile(user.id,dto,)
     }
 
     @Get('')
-    getProfile(@GetUser('id') userId:number){
-        return this.profileService.getProfile(userId)
+    getProfile(@GetUser() user:User){
+        return this.profileService.getProfile(user.id)
     }
 
 

@@ -10,6 +10,7 @@ import {Body,
   Patch,
   Post,
   UseGuards,} from '@nestjs/common';
+import {User} from '@prisma/client'
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import {PostService} from './post.service'
@@ -30,8 +31,8 @@ export class PostController {
 
   //user route
   @Get()
-  getUserPosts(@GetUser('id') userId:number){
-      return this.postService.getPosts(userId)
+  getUserPosts(@GetUser('id') user:User){
+      return this.postService.getPosts(user.id)
   }
 
   //get the specific post
@@ -47,14 +48,14 @@ export class PostController {
 
   //create the post under specific userId
   @Post()
-  createPost(@GetUser('id') userId:number,@Body() dto:createPostDto){
-     return this.postService.createPost(userId,dto,);
+  createPost(@GetUser() user:User,@Body() dto:createPostDto){
+     return this.postService.createPost(user.id,dto,);
   }
 
   //edit specific post 
   @Patch(':id')
-  editPost(@GetUser(':id') userId:number,@Param('id',ParseIntPipe) postId:number,@Body() dto:editPostDto){
-      return this.postService.editPost(userId,postId,dto,)
+  editPost(@GetUser() user:User,@Param('id',ParseIntPipe) postId:number,@Body() dto:editPostDto){
+      return this.postService.editPost(user.id,postId,dto,)
   }
 
 
