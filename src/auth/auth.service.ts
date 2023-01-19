@@ -5,6 +5,7 @@ import { AuthDto } from './dto';
 import * as bcrypt from 'bcrypt'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { ConfigService } from '@nestjs/config';
+import { isEmail,isPassword } from '../utils/helper';
 
 
 @Injectable()
@@ -17,9 +18,15 @@ export class AuthService {
 
   async signup(dto:AuthDto){
    // add the logic
-   if(dto.password.length < 8){
+
+   if(!isEmail(dto.email)){
+    throw "ilegal email input"
+   }
+   
+   if(!isPassword(dto.password)){
     throw "ilegal password input"
    }
+
    
     //transfer the password to the hashedpassword
    
@@ -40,6 +47,7 @@ export class AuthService {
         error instanceof
         PrismaClientKnownRequestError
       ) {
+        //unique key constraint to prevent duplication
         if (error.code === 'P2002') {
           throw new ForbiddenException(
             'Credentials taken',
