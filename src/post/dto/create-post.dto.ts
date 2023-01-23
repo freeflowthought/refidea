@@ -6,7 +6,7 @@ import {
   IsEnum,
 } from 'class-validator';
 
-import { Category } from '@prisma/client';
+import { Category,IsOnsite} from '@prisma/client';
 
 export class createPostDto{
   
@@ -18,6 +18,10 @@ export class createPostDto{
   @IsString()
   @IsNotEmpty()
   description:string;
+
+  @IsString()
+  @IsOptional()
+  country?:string;
   
  
   @IsNumber()
@@ -28,11 +32,17 @@ export class createPostDto{
   @IsOptional()
   bonus?:number;
 
-   
-   //Can I make it to be the enum type?
+ 
+
    @IsEnum(Category)
    @IsOptional()
    category?:Category;
+
+   @IsEnum(IsOnsite)
+   @IsOptional()
+   isOnsite?: IsOnsite;
+   
+
 
 
 

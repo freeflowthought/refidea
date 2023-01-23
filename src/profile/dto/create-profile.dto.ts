@@ -1,5 +1,6 @@
 import {
     IsNotEmpty,
+    IsOptional,
     IsString,
   } from 'class-validator';
 
@@ -7,4 +8,8 @@ import {
     @IsNotEmpty()
     @IsString()
     introduction: string;
+
+    @IsString()
+    @IsOptional()
+    country?:string
   }
