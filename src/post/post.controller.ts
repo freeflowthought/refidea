@@ -76,9 +76,9 @@ export class PostController {
   }
 
   //get all the rejected applications under the post
-  //  posts/5/rejected
-  @Get(':id/:status')
-  async filterAppsStatus(@Param('id',ParseIntPipe) postId:number,@Param('status') status:Status){
+  //  posts/5/status/rejected
+  @Get(':id/status/:status')
+  async filterAppsStatus(@Param('id',ParseIntPipe) postId:number,@Param('status') status:filterStatusDto["status"]){
      //need to find a way to deal with the wrong input such as posts/5/rejected
      let post = await this.postService.getUserPostById(postId)
       if (!post){
