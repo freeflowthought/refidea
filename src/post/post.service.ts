@@ -6,6 +6,7 @@ import { createPostDto,editPostDto, filterStatusDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaError } from 'src/utils/prismaError';
 import { PostNotFoundException } from './exceptions/postNotFound.exception';
+import { Post } from '@prisma/client';
 @Injectable()
 export class PostService {
   constructor(private prisma: PrismaService){}
@@ -22,7 +23,7 @@ export class PostService {
     });
   }
 
-  async getUserPostById(postId:number)
+  async getUserPostById(postId:number):Promise<Post>
   {
     const post = await this.prisma.post.findUnique({
       where: {
@@ -135,11 +136,11 @@ async findAllAppsByPost(postId:number){
   
 }
 
-async filterAppsStatus(postId:number,status){
+async filterAppsStatus(postId:number,statusDto:filterStatusDto["status"]){
   const app = await this.prisma.application.findMany({
     where:{
       postId:postId,
-      status:status,
+      status:statusDto,
     },
     include: {
        user:{

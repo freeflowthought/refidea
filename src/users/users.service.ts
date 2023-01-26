@@ -9,7 +9,7 @@ import { UserNotFoundException } from './exceptions/userNotFound.exception';
 export class UsersService {
   constructor(public prisma:PrismaService){}
 
-  async findOne(userId:number): Promise<User> {
+  async findOne(userId:number) {
     
     const user = await this.prisma.user.findUnique({
       where: {id:userId}

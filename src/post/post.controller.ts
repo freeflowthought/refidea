@@ -5,6 +5,7 @@ import {Body,
   Req,
   HttpCode,
   HttpStatus,
+  HttpException,
   Param,
   ParseIntPipe,
   Patch,
@@ -15,7 +16,7 @@ import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import {PostService} from './post.service'
 import {createPostDto} from './dto/create-post.dto'
-import { editPostDto } from './dto';
+import { editPostDto, filterStatusDto } from './dto';
 import { Request } from 'express';
 import { Status } from '@prisma/client';
 
@@ -38,8 +39,12 @@ export class PostController {
   //get the specific post
   //this function is buggy
   @Get(':id')
-  getUserPostById(@Param('id',ParseIntPipe) postId:number){
-      return this.postService.getUserPostById(postId)
+  async getUserPostById(@Param('id',ParseIntPipe) postId:number){
+      let post = await this.postService.getUserPostById(postId)
+      if (!post){
+          throw new HttpException('Not Found PostId', HttpStatus.NOT_FOUND)
+      }
+      return post
   }
 
   
@@ -73,8 +78,12 @@ export class PostController {
   //get all the rejected applications under the post
   //  posts/5/rejected
   @Get(':id/:status')
-  filterAppsStatus(@Param('id',ParseIntPipe) postId:number,@Param('status') status:Status){
-     //handling the extra case for the status is not one of the status
+  async filterAppsStatus(@Param('id',ParseIntPipe) postId:number,@Param('status') status:Status){
+     //need to find a way to deal with the wrong input such as posts/5/rejected
+     let post = await this.postService.getUserPostById(postId)
+      if (!post){
+          throw new HttpException('Not Found PostId', HttpStatus.NOT_FOUND)
+      }
      return this.postService.filterAppsStatus(postId,status)
   }
 
