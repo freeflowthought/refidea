@@ -104,9 +104,14 @@ async findAllAppsByPost(postId:number){
     where:{
       postId:postId,
     },
-    include: {
+    select: {
+       interest:true,
+       postId:true,
+       userId:true,
+       status:true,
        user:{
-        include:{
+        select:{
+          useremail:true,
           Profile: {
             select:{
               introduction:true
@@ -142,12 +147,18 @@ async filterAppsStatus(postId:number,statusDto:filterStatusDto["status"]){
       postId:postId,
       status:statusDto,
     },
-    include: {
+    select: {
+       interest:true,
+       postId:true,
+       userId:true,
+       status:true,
+
        user:{
-        include:{
+        select:{
+          useremail:true,
           Profile: {
             select:{
-              introduction:true
+              introduction:true,
             }
           }
         }
