@@ -55,7 +55,8 @@ model Application {
   @@map("applications")
 }
 
-//profile is the information goes with user, introduction etc.
+//profile is the information goes with user, introduction etc.  Do I need an id for Profile?
+//can it have the conflicts with the userId, profile is an attachment to user
 model Profile {
   id           Int    @id @default(autoincrement())
   introduction String
@@ -76,6 +77,7 @@ model Offer {
   Post       Post     @relation(fields: [postId], references: [id])
 
   @@map("offers")
+  @@unique([userId,postId])
 }
 
 enum Category {
