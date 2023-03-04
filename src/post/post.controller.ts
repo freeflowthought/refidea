@@ -15,8 +15,7 @@ import {User} from '@prisma/client'
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import {PostService} from './post.service'
-import {createPostDto} from './dto/create-post.dto'
-import { editPostDto, filterStatusDto } from './dto';
+import { createPostDto,editPostDto, filterStatusDto, createAppDto} from './dto';
 import { Request } from 'express';
 import { Status } from '@prisma/client';
 
@@ -64,11 +63,14 @@ export class PostController {
   }
 
 
+//create an application under specific post
+@Post(':id/applications')
+async createApplicationForPost(@GetUser() user:User, @Param('id',ParseIntPipe) postId:number,@Body() dto:createAppDto) {
+  return await this.postService.createApplication(user.id, postId,dto);   
+}
 
   //get all the applications under the post
   //  posts/5/applications
-
-  //Test Fails on this controller as well
   @Get(':id/applications')
   getApplicationByPost(@Param('id',ParseIntPipe) postId:number){
     let applications = this.postService.findAllAppsByPost(postId)

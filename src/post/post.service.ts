@@ -1,8 +1,8 @@
-import { Injectable,ForbiddenException } from '@nestjs/common';
+import { Injectable,ForbiddenException,ConflictException } from '@nestjs/common';
 import { profile } from 'console';
 import { appendFile } from 'fs';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { createPostDto,editPostDto, filterStatusDto } from './dto';
+import { createPostDto,editPostDto, filterStatusDto,createAppDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaError } from 'src/utils/prismaError';
 import { PostNotFoundException } from './exceptions/postNotFound.exception';
@@ -69,6 +69,55 @@ async editPost(userId:number,postId:number,dto:editPostDto){
         ...dto,
       },
      });
+}
+
+
+async createApplication(userId:number, postId:number, dto: createAppDto) {
+  //1: with this postId, we should be able to find the post.
+  //thinking of refactoring the code in here, the post should be other restful service, 
+  //so we need a separate logic to maintain
+  const post = await this.prisma.post.findUnique({
+    where:{
+      id:postId
+    }
+  })
+
+  //TODO: we also need to add the business application logic to ensure that someone who posted the post and 
+  //he can not apply the post that he posted by himself.  I need to make the changes on the model to make
+  //this logic to be much more clear
+  if (!post){
+    throw new ForbiddenException(
+      'the post is not exists',
+    );
+  }
+
+  //2: if the user has already made the application to the post, then throw a forbidden error as he can't make duplicate applications
+ const application = await this.prisma.application.findMany({
+    where:{
+      postId:postId,
+      userId:userId
+    }
+  })
+  console.log(application)
+  if (application.length > 0) {
+    throw new ConflictException('You have already applied to this post');
+  }
+
+
+  
+  const newApplication = await this.prisma.application.create({
+    data: {
+      userId,
+      postId,
+      ...dto,
+
+    },
+  })
+
+  return { message: 'Application created successfully', data: newApplication };
+
+
+
 }
 
 
