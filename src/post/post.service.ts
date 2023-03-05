@@ -1,4 +1,4 @@
-import { Injectable,ForbiddenException,ConflictException } from '@nestjs/common';
+import { Injectable,ForbiddenException,ConflictException, HttpException, HttpStatus } from '@nestjs/common';
 import { profile } from 'console';
 import { appendFile } from 'fs';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -6,7 +6,7 @@ import { createPostDto,editPostDto, filterStatusDto,createAppDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaError } from 'src/utils/prismaError';
 import { PostNotFoundException } from './exceptions/postNotFound.exception';
-import { Post } from '@prisma/client';
+import { Application, Post } from '@prisma/client';
 @Injectable()
 export class PostService {
   constructor(private prisma: PrismaService){}
@@ -72,49 +72,67 @@ async editPost(userId:number,postId:number,dto:editPostDto){
 }
 
 
-async createApplication(userId:number, postId:number, dto: createAppDto) {
+async createApplication(userId:number, postId:number, dto: createAppDto): Promise<{message:string, data:Application}> {
   //1: with this postId, we should be able to find the post.
   //thinking of refactoring the code in here, the post should be other restful service, 
   //so we need a separate logic to maintain
-  const post = await this.prisma.post.findUnique({
-    where:{
-      id:postId
-    }
-  })
-
-  //TODO: we also need to add the business application logic to ensure that someone who posted the post and 
-  //he can not apply the post that he posted by himself.  I need to make the changes on the model to make
-  //this logic to be much more clear
-  if (!post){
-    throw new ForbiddenException(
-      'the post is not exists',
-    );
-  }
-
-  //2: if the user has already made the application to the post, then throw a forbidden error as he can't make duplicate applications
- const application = await this.prisma.application.findMany({
-    where:{
-      postId:postId,
-      userId:userId
-    }
-  })
-  console.log(application)
-  if (application.length > 0) {
-    throw new ConflictException('You have already applied to this post');
-  }
-
-
+  try{
+    const post = await this.prisma.post.findUnique({
+      where:{
+        id:postId
+      }
+    })
   
-  const newApplication = await this.prisma.application.create({
-    data: {
-      userId,
-      postId,
-      ...dto,
+    //TODO: we also need to add the business application logic to ensure that someone who posted the post and 
+    //he can not apply the post that he posted by himself.  I need to make the changes on the model to make
+    //this logic to be much more clear
+    if (!post){
+      throw new ForbiddenException(
+        'the post is not exists',
+      );
+    }
+  
+    //2: if the user has already made the application to the post, then throw a forbidden error as he can't make duplicate applications
+   const application = await this.prisma.application.findMany({
+      where:{
+        postId:postId,
+        userId:userId
+      }
+    })
+    console.log(application)
+    if (application.length > 0) {
+      throw new ConflictException('You have already applied to this post');
+    }
+  
+  
+    
+    const newApplication = await this.prisma.application.create({
+      data: {
+        userId,
+        postId,
+        ...dto,
+  
+      },
+    })
+  
+    return {
+      message: 'Application created successfully',
+      data: newApplication,
+    };
 
-    },
-  })
-
-  return { message: 'Application created successfully', data: newApplication };
+  }catch(error){
+    console.log(error)
+    //return an appropriate error message to the client
+    if (error instanceof ForbiddenException){
+      throw new HttpException(error.message,HttpStatus.FORBIDDEN);
+    }
+    else if (error instanceof ConflictException){
+      throw new HttpException(error.message,HttpStatus.CONFLICT)
+    } else {
+      throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+  
 
 
 

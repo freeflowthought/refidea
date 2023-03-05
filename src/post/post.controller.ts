@@ -18,6 +18,7 @@ import {PostService} from './post.service'
 import { createPostDto,editPostDto, filterStatusDto, createAppDto} from './dto';
 import { Request } from 'express';
 import { Status } from '@prisma/client';
+import {Application} from '@prisma/client';
 
 @UseGuards(JwtGuard)
 @Controller('post')
@@ -65,7 +66,7 @@ export class PostController {
 
 //create an application under specific post
 @Post(':id/applications')
-async createApplicationForPost(@GetUser() user:User, @Param('id',ParseIntPipe) postId:number,@Body() dto:createAppDto) {
+async createApplicationForPost(@GetUser() user:User, @Param('id',ParseIntPipe) postId:number,@Body() dto:createAppDto): Promise<{message:string, data:Application}> {
   return await this.postService.createApplication(user.id, postId,dto);   
 }
 
